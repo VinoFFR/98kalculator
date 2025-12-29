@@ -1,0 +1,19 @@
+# Bytes
+__pycache__/
+*.pyc
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# Env
+.env
+.venv
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
