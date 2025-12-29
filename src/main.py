@@ -137,9 +137,13 @@ class ModernCalculator(QMainWindow):
             self.current_input = "0"
             self.reset_next = False
         
-        # Input Limit Check
-        if len(self.current_input) >= 15 and not self.reset_next:
-            return
+        # Smart Input Limit Check
+        # Check if the LAST number segment is too long
+        match = re.search(r'([\d\.]+)$', self.current_input)
+        if match:
+            current_num_segment = match.group(1)
+            if len(current_num_segment) >= 15 and not self.reset_next:
+                return
 
         if self.current_input == "0" and num != ".":
             self.current_input = num
