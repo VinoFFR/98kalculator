@@ -30,6 +30,15 @@ def install_dependencies():
             print(f"Failed to install PyInstaller: {e}")
             sys.exit(1)
 
+def check_installed():
+    desktop_file = os.path.expanduser("~/.local/share/applications/98kalculator.desktop")
+    if os.path.exists(desktop_file):
+        print("\nWARNING: 98kalculator seems to be already installed.")
+        response = input("Do you want to reinstall and overwrite it? [y/N]: ").strip().lower()
+        if response != 'y':
+            print("Installation aborted.")
+            sys.exit(0)
+            
 def create_executable():
     print("Creating executable for 98kalculator...")
     app_dir = os.path.dirname(os.path.abspath(__file__))
@@ -82,6 +91,7 @@ Categories=Utility;Calculator;Science;
         sys.exit(1)
 
 def main():
+    check_installed()
     install_dependencies()
     create_executable()
     create_desktop_file()

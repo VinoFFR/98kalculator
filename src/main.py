@@ -136,6 +136,11 @@ class ModernCalculator(QMainWindow):
         if self.reset_next:
             self.current_input = "0"
             self.reset_next = False
+        
+        # Input Limit Check
+        if len(self.current_input) >= 15 and not self.reset_next:
+            return
+
         if self.current_input == "0" and num != ".":
             self.current_input = num
         else:
@@ -211,12 +216,22 @@ class ModernCalculator(QMainWindow):
 
             if isinstance(res, float):
                 if res.is_integer():
-                    self.current_input = str(int(res))
+                   result_str = str(int(res))
                 else:
-                    self.current_input = f"{res:.8f}".rstrip('0').rstrip('.')
+                   result_str = f"{res:.8f}".rstrip('0').rstrip('.')
             else:
-                self.current_input = str(res)
-                
+                result_str = str(res)
+
+            # Scientific Notation Check
+            if len(result_str) > 12:
+                try:
+                    # Convert back to float to format
+                    val = float(res)
+                    result_str = f"{val:.5e}"
+                except:
+                    pass # Keep original if conversion fails
+
+            self.current_input = result_str
             self.lbl_history.setText(expression.replace("math.", "") + " =")
             self.update_display()
             self.reset_next = True
