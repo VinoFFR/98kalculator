@@ -55,19 +55,30 @@ def update_repo():
             print_status("Not a git repository. Cannot update via git.", "31")
             return False
 
-        result = subprocess.run(["git", "pull"], capture_output=True, text=True)
+        print_status("Fetching latest updates...", "34")
+        try:
+             subprocess.run(["git", "fetch", "--all"], check=True)
+        except subprocess.CalledProcessError:
+             print_status("Failed to fetch updates. Check internet connection.", "31")
+             return False
+
+        print_status("Resetting local files to match remote...", "33")
+        
+        # Determine current branch
+        try:
+            branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], text=True).strip()
+        except:
+            branch = "main" # Fallback
+
+        # Reset local changes to match the remote branch
+        result = subprocess.run(["git", "reset", "--hard", f"origin/{branch}"], capture_output=True, text=True)
         
         if result.returncode != 0:
-            print_status(f"Error pulling updates: {result.stderr}", "31")
-            return False
-            
-        if "Already up to date" in result.stdout:
-            print_status("Already up to date!", "32")
-            return False # No update needed
-        else:
-            print_status("Updates downloaded successfully!", "32")
-            print(result.stdout)
-            return True # Updated
+             print_status(f"Error resetting to remote: {result.stderr}", "31")
+             return False
+        
+        print_status("Successfully updated/restored to latest version!", "32")
+        return True
             
     except Exception as e:
         print_status(f"An unexpected error occurred: {e}", "31")

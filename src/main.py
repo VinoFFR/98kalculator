@@ -61,6 +61,8 @@ class ModernCalculator(QMainWindow):
         self.lbl_result = QLabel("0")
         self.lbl_result.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignBottom)
         self.lbl_result.setObjectName("ResultLabel")
+        # Prevent the label from pushing the window wider; let it shrink/clip so our resize logic works
+        self.lbl_result.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
         self.lbl_result.setGraphicsEffect(shadow)
         self.display_layout.addWidget(self.lbl_result)
 
@@ -269,7 +271,9 @@ class ModernCalculator(QMainWindow):
         if not text:
              return
 
-        target_width = self.lbl_result.width()
+        # Use the MAIN WINDOW width minus margins (25 left + 25 right = 50, +10 safety)
+        # We rely on the window width because the container might expand depending on layout properties
+        target_width = self.width() - 60
         if target_width <= 0:
              return
              
@@ -279,7 +283,8 @@ class ModernCalculator(QMainWindow):
         font = self.lbl_result.font()
         font.setPixelSize(base_size)
         
-        for size in range(base_size, min_size - 1, -4):
+        # Iteratively reduce font size until it fits
+        for size in range(base_size, min_size - 1, -2): # Step -2 for smoother transition
             font.setPixelSize(size)
             fm = QFontMetrics(font)
             if fm.horizontalAdvance(text) <= target_width:
