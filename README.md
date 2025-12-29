@@ -6,6 +6,9 @@ A modern scientific calculator for Linux (Wayland).
 
 ![98K](https://github.com/VinoFFR/98kalculator/blob/main/icon.png?raw=true)
 
+## Preview
+![Preview](https://github.com/VinoFFR/98kalculator/blob/main/preview.png?raw=true)
+
 ## Why 98kalculator?
 
 Most Linux calculators are functional but basic.
