@@ -6,7 +6,7 @@ from PyQt6.QtCore import (
     Qt, QSize, QPropertyAnimation, QRect, QEasingCurve, 
     QPoint, QParallelAnimationGroup, QSequentialAnimationGroup
 )
-from PyQt6.QtGui import QFont, QIcon, QKeySequence, QShortcut, QColor, QPalette
+from PyQt6.QtGui import QFont, QIcon, QKeySequence, QShortcut, QColor, QPalette, QFontMetrics
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QGridLayout, 
     QPushButton, QLabel, QSizePolicy, QGraphicsDropShadowEffect
@@ -137,8 +137,7 @@ class ModernCalculator(QMainWindow):
             self.current_input = "0"
             self.reset_next = False
         
-        # Smart Input Limit Check
-        # Check if the LAST number segment is too long
+
         match = re.search(r'([\d\.]+)$', self.current_input)
         if match:
             current_num_segment = match.group(1)
@@ -226,14 +225,12 @@ class ModernCalculator(QMainWindow):
             else:
                 result_str = str(res)
 
-            # Scientific Notation Check
             if len(result_str) > 12:
                 try:
-                    # Convert back to float to format
                     val = float(res)
                     result_str = f"{val:.5e}"
                 except:
-                    pass # Keep original if conversion fails
+                    pass 
 
             self.current_input = result_str
             self.lbl_history.setText(expression.replace("math.", "") + " =")
@@ -265,6 +262,34 @@ class ModernCalculator(QMainWindow):
 
     def update_display(self):
         self.lbl_result.setText(self.current_input)
+        self.adjust_font_size()
+
+    def adjust_font_size(self):
+        text = self.lbl_result.text()
+        if not text:
+             return
+
+        target_width = self.lbl_result.width()
+        if target_width <= 0:
+             return
+             
+        base_size = 64
+        min_size = 20
+        
+        font = self.lbl_result.font()
+        font.setPixelSize(base_size)
+        
+        for size in range(base_size, min_size - 1, -4):
+            font.setPixelSize(size)
+            fm = QFontMetrics(font)
+            if fm.horizontalAdvance(text) <= target_width:
+                break
+        
+        self.lbl_result.setFont(font)
+    
+    def resizeEvent(self, event):
+        self.adjust_font_size()
+        super().resizeEvent(event)
 
     def get_stylesheet(self):
         return """
