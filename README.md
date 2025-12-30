@@ -34,7 +34,17 @@ Most Linux calculators are functional but basic.
 * Linux (tested on Wayland / Hyprland)
 * Python 3
 
-### Install
+### Arch Linux (AUR)
+
+You can install `98kalculator-git` directly from the AUR using your favorite helper:
+
+```bash
+yay -S 98kalculator-git
+# or
+paru -S 98kalculator-git
+```
+
+### Manual Install
 
 ```bash
 git clone https://github.com/VinoFFR/98kalculator.git
